@@ -62,14 +62,14 @@ const AudioRecorder = () => {
   };
 
   return (
-    <div>
-      <button onClick={startRecording} disabled={recording}>
+    <div style={{padding: '20px'}}>
+      <button style={{cursor:'pointer'}} onClick={startRecording} disabled={recording}>
         Start Recording
       </button>
-      <button onClick={stopRecording} disabled={!recording}>
+      <button style={{cursor:'pointer',margin:'10px'}} onClick={stopRecording} disabled={!recording}>
         Stop Recording
       </button>
-      <p>Transcription: {transcription}</p>
+      <p style={{color:'blue'}}> Transcription: {transcription}</p>
     </div>
   );
 };
