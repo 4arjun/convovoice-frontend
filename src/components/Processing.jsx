@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import RecordRTC from "recordrtc";
 
 const AudioRecorder = () => {
-  const [transcription, setTranscription] = useState("");
+  const [assistantResponse, setAssistantResponse] = useState("");
   const [recording, setRecording] = useState(false);
   const audioRecorder = useRef(null);
   const mediaStream = useRef(null);
@@ -33,7 +33,7 @@ const AudioRecorder = () => {
         formData.append("audio", blob, "audio.wav");
 
         try {
-          const response = await fetch("http://127.0.0.1:8000/transcribe", {
+          const response = await fetch("http://127.0.0.1:8000/transcribe_and_respond/", {
             method: "POST",
             body: formData,
           });
@@ -45,15 +45,15 @@ const AudioRecorder = () => {
           const result = await response.json();
           console.log("Response from backend:", result);
 
-          if (result.transcripts) {
-            setTranscription(result.transcripts.join(" ")); // Join array into a single string
+          if (result.assistant_message) {
+            setAssistantResponse(result.assistant_message);
           } else {
-            console.warn("No transcripts found in the response");
-            setTranscription("No transcription available");
+            console.warn("No assistant message found in the response");
+            setAssistantResponse("No response available");
           }
         } catch (error) {
-          console.error("Error during transcription:", error);
-          setTranscription("Error during transcription");
+          console.error("Error during transcription and response:", error);
+          setAssistantResponse("Error during transcription and response");
         }
       });
       mediaStream.current.getTracks().forEach((track) => track.stop());
@@ -62,14 +62,14 @@ const AudioRecorder = () => {
   };
 
   return (
-    <div style={{padding: '20px'}}>
-      <button style={{cursor:'pointer'}} onClick={startRecording} disabled={recording}>
+    <div style={{ padding: '20px' }}>
+      <button style={{ cursor: 'pointer' }} onClick={startRecording} disabled={recording}>
         Start Recording
       </button>
-      <button style={{cursor:'pointer',margin:'10px'}} onClick={stopRecording} disabled={!recording}>
+      <button style={{ cursor: 'pointer', margin: '10px' }} onClick={stopRecording} disabled={!recording}>
         Stop Recording
       </button>
-      <p style={{color:'blue'}}> Transcription: {transcription}</p>
+      <p style={{ color: 'blue' }}>Assistant Response: {assistantResponse}</p>
     </div>
   );
 };
