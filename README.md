@@ -8,39 +8,44 @@ This project is a language learning chat application using Django and the OpenAI
 - **Conversation History**: Maintains context with session-based conversation history.
 - **Customizable Responses**: The assistant can be fine-tuned to provide more accurate and helpful feedback.
 - **Friendly and Supportive Tone**: The assistant is designed to be a friendly companion, providing encouragement and constructive feedback.
+- **Speech-to-Text**: Integrates Google Cloud Speech-to-Text API for converting spoken language into text.
+- **Modern Frontend**: Utilizes React with Vite for a fast and efficient frontend development experience.
 
-## Setup Instructions
-
-### Prerequisites
+## Prerequisites
 
 - Python 3.8+
 - Django 5.0.6
 - OpenAI API Key
+- Node.js (for React and Vite)
+- Google Cloud Speech-to-Text API Key
 
-### Installation
+## Installation
+
+### Backend Setup
 
 1. **Clone the Repository**
-    
-    git clone
+    ```bash
+    git clone https://github.com/4arjun/convovoice-frontend.git
     cd convovoice
-    
+    ```
 
 2. **Create a Virtual Environment**
-    bash
+    ```bash
     python -m venv convovoice-env
     source convovoice-env/bin/activate  # On Windows, use `convovoice-env\Scripts\activate`
-    
+    ```
 
 3. **Install Dependencies**
-    bash
+    ```bash
     pip install -r requirements.txt
-    
+    ```
 
 4. **Configure Environment Variables**
 
-    Create a `.env` file in the root directory and add your OpenAI API key:
+    Create a `.env` file in the root directory and add your API keys:
     ```
     OPENAI_API_KEY=your-openai-api-key
+    GCP_SPEECH_TO_TEXT_API_KEY=your-google-cloud-api-key
     ```
 
 5. **Apply Database Migrations**
@@ -55,14 +60,35 @@ This project is a language learning chat application using Django and the OpenAI
     ```
 
 7. **Access the Application**
-
     Open your web browser and go to `http://localhost:8000/chat`.
+
+### Frontend Setup
+
+1. **Navigate to the Frontend Directory**
+    ```bash
+    cd convovoice
+    ```
+
+2. **Install Dependencies**
+    ```bash
+    npm install
+    ```
+
+3. **Run the Development Server**
+    ```bash
+    npm run dev
+    ```
+
+4. **Access the Frontend**
+
+    Open your web browser and go to `http://localhost:3000`.
 
 ## Project Structure
 
 - `speechanalyser/`: Main Django application directory.
 - `speechanalyser/views.py`: Contains the `chat_view` function that handles chat requests.
 - `speechanalyser/urls.py`: URL routing for the application.
+- `frontend/`: Directory containing the React frontend.
 - `requirements.txt`: List of dependencies required by the project.
 
 ## Usage
@@ -111,4 +137,4 @@ License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 Contact
-For any questions or suggestions, please open an issue or contact me at [your-email@example.com].
+For any questions or suggestions, please open an issue or contact me at arjunajith440@gmail.com.
