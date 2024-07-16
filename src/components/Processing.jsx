@@ -7,6 +7,9 @@ const AudioRecorder = () => {
   const audioRecorder = useRef(null);
   const mediaStream = useRef(null);
 
+  // Function to get the token from localStorage
+  const getToken = () => localStorage.getItem('token');
+
   const startRecording = async () => {
     try {
       mediaStream.current = await navigator.mediaDevices.getUserMedia({
@@ -33,9 +36,13 @@ const AudioRecorder = () => {
         formData.append("audio", blob, "audio.wav");
 
         try {
+          const token = getToken(); // Get the token from localStorage
           const response = await fetch("http://127.0.0.1:8000/transcribe_and_respond/", {
             method: "POST",
             body: formData,
+            headers: {
+              'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+            },
           });
 
           if (!response.ok) {
