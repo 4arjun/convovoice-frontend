@@ -6,6 +6,7 @@ const AudioRecorder = () => {
   const [recording, setRecording] = useState(false);
   const audioRecorder = useRef(null);
   const mediaStream = useRef(null);
+  const audioElement = useRef(null);
 
   // Function to get the token from localStorage
   const getToken = () => localStorage.getItem('token');
@@ -54,6 +55,13 @@ const AudioRecorder = () => {
 
           if (result.assistant_message) {
             setAssistantResponse(result.assistant_message);
+            if (result.audio_content) {
+              const audioSrc = `data:audio/mp3;base64,${result.audio_content}`;
+              if (audioElement.current) {
+                audioElement.current.src = audioSrc;
+                audioElement.current.play();
+              }
+            }
           } else {
             console.warn("No assistant message found in the response");
             setAssistantResponse("No response available");
@@ -77,6 +85,7 @@ const AudioRecorder = () => {
         Stop Recording
       </button>
       <p style={{ color: 'blue' }}>Assistant Response: {assistantResponse}</p>
+      <audio ref={audioElement} controls style={{ marginTop: '20px' }} />
     </div>
   );
 };
