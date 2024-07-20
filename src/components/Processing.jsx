@@ -1,5 +1,47 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import RecordRTC from "recordrtc";
+
+// Function to get the token from localStorage
+const getToken = () => localStorage.getItem('token');
+
+// Function to get the refresh token from localStorage
+const getRefreshToken = () => localStorage.getItem('refresh_token');
+
+// Function to save tokens to localStorage
+const saveTokens = (accessToken, refreshToken) => {
+  localStorage.setItem('token', accessToken);
+  localStorage.setItem('refresh_token', refreshToken);
+};
+
+// Function to refresh the token
+const refreshToken = async () => {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) {
+    console.error("No refresh token available");
+    return null;
+  }
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ refresh: refreshToken })
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to refresh token");
+    }
+
+    const result = await response.json();
+    saveTokens(result.access, result.refresh);
+    return result.access;
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    return null;
+  }
+};
 
 const AudioRecorder = () => {
   const [assistantResponse, setAssistantResponse] = useState("");
@@ -8,8 +50,21 @@ const AudioRecorder = () => {
   const mediaStream = useRef(null);
   const audioElement = useRef(null);
 
-  // Function to get the token from localStorage
-  const getToken = () => localStorage.getItem('token');
+  // Token refresh logic on component mount
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const token = getToken();
+      if (token) {
+        const decodedToken = jwt_decode(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+        // Refresh the token if it will expire in the next minute
+        if (decodedToken.exp < currentTime + 60) {
+          await refreshToken();
+        }
+      }
+    }, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, []);
 
   const startRecording = async () => {
     try {
@@ -18,8 +73,7 @@ const AudioRecorder = () => {
       });
       audioRecorder.current = new RecordRTC(mediaStream.current, {
         type: "audio",
-        audioBitsPerSecond: 16000, // Set the audio bits per second
-        sampleRate: 16000, // Set the sample rate
+       
         mimeType: "audio/wav",
       });
       audioRecorder.current.startRecording();
@@ -37,7 +91,11 @@ const AudioRecorder = () => {
         formData.append("audio", blob, "audio.wav");
 
         try {
-          const token = getToken(); // Get the token from localStorage
+          let token = getToken(); // Get the token from localStorage
+          if (!token) {
+            token = await refreshToken();
+          }
+
           const response = await fetch("http://127.0.0.1:8000/transcribe_and_respond/", {
             method: "POST",
             body: formData,
