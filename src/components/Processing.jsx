@@ -69,12 +69,14 @@ const AudioRecorder = () => {
   const startRecording = async () => {
     try {
       mediaStream.current = await navigator.mediaDevices.getUserMedia({
-        audio: true,
+        audio: {
+          sampleRate: 16000, // Set the sample rate
+        }
       });
       audioRecorder.current = new RecordRTC(mediaStream.current, {
         type: "audio",
-       
-        mimeType: "audio/wav",
+        mimeType: "audio/webm",
+        // Note: `audioBitsPerSecond` is not a typical parameter in RecordRTC
       });
       audioRecorder.current.startRecording();
       setRecording(true);
@@ -88,7 +90,7 @@ const AudioRecorder = () => {
       audioRecorder.current.stopRecording(async () => {
         const blob = audioRecorder.current.getBlob();
         const formData = new FormData();
-        formData.append("audio", blob, "audio.wav");
+        formData.append("audio", blob, "audio.webm");
 
         try {
           let token = getToken(); // Get the token from localStorage
