@@ -1,19 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import RecordRTC from "recordrtc";
 
-// Function to get the token from localStorage
 const getToken = () => localStorage.getItem('token');
-
-// Function to get the refresh token from localStorage
 const getRefreshToken = () => localStorage.getItem('refresh_token');
-
-// Function to save tokens to localStorage
 const saveTokens = (accessToken, refreshToken) => {
   localStorage.setItem('token', accessToken);
   localStorage.setItem('refresh_token', refreshToken);
 };
 
-// Function to refresh the token
 const refreshToken = async () => {
   const refreshToken = getRefreshToken();
   if (!refreshToken) {
@@ -24,19 +18,17 @@ const refreshToken = async () => {
   try {
     const response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
       method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refresh: refreshToken })
     });
 
-    if (!response.ok) {
+    if (response.ok) {
+      const result = await response.json();
+      saveTokens(result.access, result.refresh);
+      return result.access;
+    } else {
       throw new Error("Failed to refresh token");
     }
-
-    const result = await response.json();
-    saveTokens(result.access, result.refresh);
-    return result.access;
   } catch (error) {
     console.error("Error refreshing token:", error);
     return null;
@@ -50,14 +42,12 @@ const AudioRecorder = () => {
   const mediaStream = useRef(null);
   const audioElement = useRef(null);
 
-  // Token refresh logic on component mount
   useEffect(() => {
     const interval = setInterval(async () => {
       const token = getToken();
       if (token) {
         const decodedToken = jwt_decode(token);
         const currentTime = Math.floor(Date.now() / 1000);
-        // Refresh the token if it will expire in the next minute
         if (decodedToken.exp < currentTime + 60) {
           await refreshToken();
         }
@@ -68,16 +58,8 @@ const AudioRecorder = () => {
 
   const startRecording = async () => {
     try {
-      mediaStream.current = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          sampleRate: 16000, // Set the sample rate
-        }
-      });
-      audioRecorder.current = new RecordRTC(mediaStream.current, {
-        type: "audio",
-        mimeType: "audio/webm",
-        // Note: `audioBitsPerSecond` is not a typical parameter in RecordRTC
-      });
+      mediaStream.current = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000 } });
+      audioRecorder.current = new RecordRTC(mediaStream.current, { type: "audio", mimeType: "audio/webm" });
       audioRecorder.current.startRecording();
       setRecording(true);
     } catch (error) {
@@ -93,7 +75,7 @@ const AudioRecorder = () => {
         formData.append("audio", blob, "audio.webm");
 
         try {
-          let token = getToken(); // Get the token from localStorage
+          let token = getToken();
           if (!token) {
             token = await refreshToken();
           }
@@ -101,20 +83,12 @@ const AudioRecorder = () => {
           const response = await fetch("http://127.0.0.1:8000/transcribe_and_respond/", {
             method: "POST",
             body: formData,
-            headers: {
-              'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
-            },
+            headers: { 'Authorization': `Bearer ${token}` }
           });
 
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-
-          const result = await response.json();
-          console.log("Response from backend:", result);
-
-          if (result.assistant_message) {
-            setAssistantResponse(result.assistant_message);
+          if (response.ok) {
+            const result = await response.json();
+            setAssistantResponse(result.assistant_message || "No response available");
             if (result.audio_content) {
               const audioSrc = `data:audio/mp3;base64,${result.audio_content}`;
               if (audioElement.current) {
