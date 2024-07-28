@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import "./Login.css";
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import FormPopup from "./FormPopUp";
 
 const Login = ({ setToken }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [isPopupVisible, setPopupVisible] = useState(false);
+
+  const togglePopup = () => {
+    setPopupVisible(!isPopupVisible);
+  };
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -12,7 +19,7 @@ const Login = ({ setToken }) => {
     event.preventDefault();
     try {
       // Perform the login request
-      const response = await axios.post('http://localhost:8000/api/token/', {
+      const response = await axios.post("http://localhost:8000/api/token/", {
         username,
         password,
       });
@@ -20,21 +27,25 @@ const Login = ({ setToken }) => {
       // Check if the response status is OK (200 range)
       if (response.status == 200) {
         const token = response.data.access;
-        localStorage.setItem('token', token);
+        localStorage.setItem("token", token);
         setToken(token);
         setError(null);
-        navigate('/'); // Redirect after login
+        navigate("/"); // Redirect after login
       } else {
         // Handle non-200 status codes
-        setError('Invalid credentials');
+        setError("Invalid credentials");
       }
     } catch (err) {
       // Handle error responses (like network issues)
-      setError('Invalid credentials');
+      setError("Invalid credentials");
     }
   };
   return (
     <div>
+      <button className="login-btn" onClick={togglePopup}>
+        LOG IN
+      </button>
+      {isPopupVisible && <FormPopup closePopup={togglePopup} />}
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
         <div>

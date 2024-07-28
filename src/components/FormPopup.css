@@ -1,0 +1,153 @@
+/* FormPopup.css */
+
+.form-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.3s ease;
+}
+
+.form-popup .close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  font-size: 24px;
+  color: #fff;
+}
+
+.form-box {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: none;
+  transition: transform 0.3s ease;
+}
+
+.form-popup.show-login .form-box.login,
+.form-popup.show-signup .form-box.signup {
+  display: block;
+}
+
+.form-box .form-details {
+  padding: 20px;
+  background: #275360;
+  color: #fff;
+  text-align: center;
+}
+
+.form-box .form-content {
+  padding: 20px;
+}
+
+.form-box h2 {
+  margin: 0 0 20px;
+  font-size: 1.5rem;
+}
+
+.form-box p {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+}
+
+.input-field {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-field input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input-field input:focus {
+  border-color: #275360;
+}
+
+.input-field label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  background: #fff;
+  padding: 0 5px;
+  color: #aaa;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.input-field input:focus + label,
+.input-field input:not(:placeholder-shown) + label {
+  top: 0;
+  font-size: 0.75rem;
+  color: #275360;
+}
+
+.forgot-pass-link,
+.bottom-link a {
+  color: #275360;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.forgot-pass-link:hover,
+.bottom-link a:hover {
+  color: #1d404a;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #275360;
+  color: #fff;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background: #1d404a;
+}
+
+.bottom-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+.policy-text {
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  margin-bottom: 20px;
+}
+
+.policy-text input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.policy-text a {
+  color: #275360;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.policy-text a:hover {
+  color: #1d404a;
+}
