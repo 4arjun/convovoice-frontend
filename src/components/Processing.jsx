@@ -1,5 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import "./Processing.css";
 import RecordRTC from "recordrtc";
+import { ClipLoader } from "react-spinners"; // Import ClipLoader or any other spinner component
 
 const getToken = () => localStorage.getItem('token');
 const getRefreshToken = () => localStorage.getItem('refresh_token');
@@ -8,7 +10,7 @@ const saveTokens = (accessToken, refreshToken) => {
   localStorage.setItem('refresh_token', refreshToken);
 };
 
-const refreshToken = async () => {
+const fetchToken = async () => {
   const refreshToken = getRefreshToken();
   if (!refreshToken) {
     console.error("No refresh token available");
@@ -36,27 +38,25 @@ const refreshToken = async () => {
 };
 
 const AudioRecorder = () => {
-  const [assistantResponse, setAssistantResponse] = useState("");
+  const [messages, setMessages] = useState([]);
   const [recording, setRecording] = useState(false);
+  const [loading, setLoading] = useState(false);
   const audioRecorder = useRef(null);
   const mediaStream = useRef(null);
   const audioElement = useRef(null);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = useCallback(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
-      const token = getToken();
-      if (token) {
-        const decodedToken = jwt_decode(token);
-        const currentTime = Math.floor(Date.now() / 1000);
-        if (decodedToken.exp < currentTime + 60) {
-          await refreshToken();
-        }
-      }
-    }, 60000); // Check every minute
-    return () => clearInterval(interval);
-  }, []);
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
 
-  const startRecording = async () => {
+  const startRecording = useCallback(async () => {
     try {
       mediaStream.current = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000 } });
       audioRecorder.current = new RecordRTC(mediaStream.current, { type: "audio", mimeType: "audio/webm" });
@@ -65,19 +65,21 @@ const AudioRecorder = () => {
     } catch (error) {
       console.error("Error accessing audio devices:", error);
     }
-  };
+  }, []);
 
-  const stopRecording = async () => {
+  const stopRecording = useCallback(async () => {
     if (audioRecorder.current) {
       audioRecorder.current.stopRecording(async () => {
         const blob = audioRecorder.current.getBlob();
         const formData = new FormData();
         formData.append("audio", blob, "audio.webm");
 
+        setLoading(true); // Show loading symbol
+
         try {
           let token = getToken();
           if (!token) {
-            token = await refreshToken();
+            token = await fetchToken();
           }
 
           const response = await fetch("http://127.0.0.1:8000/transcribe_and_respond/", {
@@ -88,7 +90,12 @@ const AudioRecorder = () => {
 
           if (response.ok) {
             const result = await response.json();
-            setAssistantResponse(result.assistant_message || "No response available");
+            setMessages(prevMessages => [
+              ...prevMessages,
+              { text: result.user_message || "No message available", type: 'user' },
+              { text: result.assistant_message || "No response available", type: 'assistant' }
+            ]);
+
             if (result.audio_content) {
               const audioSrc = `data:audio/mp3;base64,${result.audio_content}`;
               if (audioElement.current) {
@@ -98,28 +105,63 @@ const AudioRecorder = () => {
             }
           } else {
             console.warn("No assistant message found in the response");
-            setAssistantResponse("No response available");
+            setMessages(prevMessages => [
+              ...prevMessages,
+              { text: "No response available", type: 'assistant' }
+            ]);
           }
         } catch (error) {
           console.error("Error during transcription and response:", error);
-          setAssistantResponse("Error during transcription and response");
+          setMessages(prevMessages => [
+            ...prevMessages,
+            { text: "Error during transcription and response", type: 'assistant' }
+          ]);
+        } finally {
+          setLoading(false); // Hide loading symbol
         }
       });
-      mediaStream.current.getTracks().forEach((track) => track.stop());
+
+      mediaStream.current.getTracks().forEach(track => track.stop());
       setRecording(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (mediaStream.current) {
+        mediaStream.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
 
   return (
-    <div style={{ padding: '20px' }}>
-      <button style={{ cursor: 'pointer' }} onClick={startRecording} disabled={recording}>
-        Start Recording
-      </button>
-      <button style={{ cursor: 'pointer', margin: '10px' }} onClick={stopRecording} disabled={!recording}>
-        Stop Recording
-      </button>
-      <p style={{ color: 'blue' }}>Assistant Response: {assistantResponse}</p>
-      <audio ref={audioElement} controls style={{ marginTop: '20px' }} />
+    <div className="chat-container">
+      <div className="chat-header">
+        <h2>Language Learner</h2>
+      </div>
+      <div className="chat-messages">
+        {messages.map((msg, index) => (
+          <div key={index} className={`chat-message ${msg.type}`}>
+            {msg.text}
+          </div>
+        ))}
+        {loading && (
+          <div className="loading-container">
+            <ClipLoader color="#2196f3" size={60} />
+          </div>
+        )}
+        {/* Scroll to bottom */}
+        <div ref={messagesEndRef} />
+      </div>
+      <div className="chat-input">
+        <button onClick={startRecording} disabled={recording}>
+          {recording ? "Recording..." : "Start Recording"}
+        </button>
+        <button onClick={stopRecording} disabled={!recording}>
+          Stop Recording
+        </button>
+      </div>
+      <audio ref={audioElement} controls style={{ display: 'none' }} />
     </div>
   );
 };
