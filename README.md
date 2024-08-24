@@ -1,6 +1,6 @@
 # Language Learner Chat Application
 
-This project is a language learning chat application using Django and the OpenAI GPT-4 turbo API. The application provides a friendly and supportive companion to help users practice and improve their language skills through interactive conversations.
+This project is a language learning chat application using Django, React and the turbo API. The application provides a friendly and supportive companion to help users practice and improve their language skills through interactive conversations.
 
 ## Features
 
