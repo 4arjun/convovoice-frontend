@@ -1,72 +1,71 @@
-import "./Login.css";
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import FormPopup from "./FormPopUp";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';  // Use this for redirection
 
-const Login = ({ setToken }) => {
-  const [isPopupVisible, setPopupVisible] = useState(false);
+const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();  // Initialize useNavigate for redirection
 
-  const togglePopup = () => {
-    setPopupVisible(!isPopupVisible);
-  };
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
-
-  const handleSubmit = async (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
+    setError('');  // Reset error message
+
     try {
-      // Perform the login request
-      const response = await axios.post("http://localhost:8000/api/token/", {
-        username,
-        password,
+      const response = await fetch('http://127.0.0.1:8000/api/token/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
       });
 
-      // Check if the response status is OK (200 range)
-      if (response.status == 200) {
-        const token = response.data.access;
-        localStorage.setItem("token", token);
-        setToken(token);
-        setError(null);
-        navigate("/"); // Redirect after login
+      if (response.ok) {
+        const data = await response.json();
+        const { access, refresh } = data;
+        
+        // Store the JWT tokens in localStorage
+        localStorage.setItem('accessToken', access);
+        localStorage.setItem('refreshToken', refresh);
+
+        navigate('/');
+        console.log('Login successful!');
       } else {
-        // Handle non-200 status codes
-        setError("Invalid credentials");
+        setError('Login failed. Please check your credentials.');
       }
-    } catch (err) {
-      // Handle error responses (like network issues)
-      setError("Invalid credentials");
+    } catch (error) {
+      console.error('Error during login:', error);
+      setError('An error occurred. Please try again.');
     }
   };
+
   return (
-    <div>
-      <button className="login-btn" onClick={togglePopup}>
-        LOG IN
-      </button>
-      {isPopupVisible && <FormPopup closePopup={togglePopup} />}
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username</label>
+    <div style={{ maxWidth: '300px', margin: '0 auto', padding: '20px', textAlign: 'center' }}>
+      <h2>Login</h2>
+      <form onSubmit={handleLogin}>
+        <div style={{ marginBottom: '10px' }}>
           <input
             type="text"
+            placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            style={{ width: '100%', padding: '8px' }}
           />
         </div>
-        <div>
-          <label>Password</label>
+        <div style={{ marginBottom: '10px' }}>
           <input
             type="password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            style={{ width: '100%', padding: '8px' }}
           />
         </div>
-        {error && <p>{error}</p>}
-        <button type="submit">Login</button>
+        <button type="submit" style={{ width: '100%', padding: '10px', background: '#2196f3', color: '#fff' }}>
+          Login
+        </button>
       </form>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };
