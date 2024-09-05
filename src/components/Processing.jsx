@@ -55,7 +55,7 @@ const AudioRecorder = () => {
 
     const timeoutId = setTimeout(() => {
       refreshAccessToken();
-    }, 2 * 60 * 100); // 2 minutes
+    }, 2 * 60 * 10000); // 2 minutes
 
     return () => clearTimeout(timeoutId);
   }, []);
