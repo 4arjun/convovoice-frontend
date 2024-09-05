@@ -148,16 +148,26 @@ const Login2 = () => {
               }}
             >
               <input
-                style={{ marginTop: "4px" }}
+                style={{ marginTop: "3px" }}
                 type="checkbox"
                 id="myCheckbox"
                 name="myCheckbox"
                 value="value1"
               />
-              <p style={{ marginLeft: "-40px", fontSize: "16px" }}>
+              <p style={{ marginLeft: "-55px", fontSize: "16px" }}>
                 Remember me
               </p>
-              <p style={{ fontSize: "16px" }}>Forgot Password?</p>
+              <a
+                href="#"
+                style={{
+                  fontSize: "16px",
+                  margin: "auto 0",
+                  textDecoration: "None",
+                  color: "white",
+                }}
+              >
+                Forgot Password
+              </a>
             </div>
 
             <button style={{ marginTop: "15px" }} className="login-btn">
