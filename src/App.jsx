@@ -1,8 +1,8 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AudioRecorder from "./components/Processing";
-import React, { useState } from 'react';
-import Login2 from "./components/Login2";
+import React from 'react';
+import Login from "./components/Login";
 
 function App() {
 
@@ -11,7 +11,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/process" element={<AudioRecorder />} />
-          <Route path="/" element={<Login2/>} />
+          <Route path="/" element={<Login/>} />
         </Routes>
       </Router>
   );

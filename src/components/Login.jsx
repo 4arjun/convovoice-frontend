@@ -1,10 +1,12 @@
-import "./Login2.css";
+import "./Login.css";
 import React, { useState } from "react";
 import bgimg from "../assets/bg-img.jpg";
 import { useNavigate } from "react-router-dom";
+import { Alert } from "@mui/material";
 
 const Login2 = () => {
   const navigate = useNavigate();
+  const [showAlert, setShowAlert] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -44,6 +46,9 @@ const Login2 = () => {
         setError("Login failed. Please check your credentials.");
       }
     } catch (error) {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 5000);
+
       console.error("Error during login:", error);
       setError("An error occurred. Please try again.");
     }
@@ -51,6 +56,25 @@ const Login2 = () => {
 
   return (
     <div className="login-container">
+      {showAlert && (
+        <Alert
+          style={{
+            zIndex: "1",
+            position: "absolute",
+            top: "10%",
+            backgroundColor: "#1d0f57",
+            color: "#fff",
+            left: "50%",
+            transform: "translateX(-50%)",
+            maxWidth: "400px",
+          }}
+          severity="error"
+          onClose={() => setShowAlert(false)}
+        >
+          Incorrect username or password. Please try again.
+        </Alert>
+      )}
+
       <div className="bg-img-container">
         <img src={bgimg} alt="" />
         <div className="login-form">
@@ -201,15 +225,7 @@ const Login2 = () => {
               <p style={{ marginLeft: "-55px", fontSize: "16px" }}>
                 Remember me
               </p>
-              <a
-                href="#"
-                style={{
-                  fontSize: "16px",
-                  margin: "auto 0",
-                  textDecoration: "None",
-                  color: "white",
-                }}
-              >
+              <a className="forgot-password-text" href="#">
                 Forgot Password
               </a>
             </div>
@@ -234,16 +250,7 @@ const Login2 = () => {
               <p style={{ fontWeight: "200", fontSize: "15px" }}>
                 Dont have an account?
               </p>
-              <a
-                style={{
-                  textDecoration: "None",
-                  color: "white",
-                  margin: "auto 0",
-                  fontWeight: "600",
-                  paddingLeft: "5px",
-                }}
-                href="#"
-              >
+              <a className="register-text" href="#">
                 Register
               </a>
             </div>
