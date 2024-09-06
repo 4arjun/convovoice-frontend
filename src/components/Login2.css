@@ -12,7 +12,7 @@
   position: relative;
   height: 88%;
   width: 80%;
-  max-width: 1000px; /* Set a max width for larger screens */
+  max-width: 1000px;
 }
 
 .bg-img-container img {
@@ -34,7 +34,7 @@
   border-radius: 20px;
   border: 1.5px solid rgb(210, 210, 210);
   width: 90%;
-  max-width: 400px; /* Limit the max-width */
+  max-width: 400px;
   padding: 20px;
 }
 
@@ -53,17 +53,26 @@
 
 .login-btn {
   height: 50px;
-  background-color: rgb(255, 255, 255);
-  width: 80%;
+  background: linear-gradient(135deg, #1d0f57, #b31041);
+  width: 75%;
   border-radius: 10px;
-  font-weight: 600;
-  font-size: 1em;
+  font-size: 1.4em;
   border: 1px solid rgb(187, 171, 171);
+  color: white;
   margin-top: 15px;
+  transition: all 0.3s ease;
+  font-family: "Crimson Text", serif;
+  font-weight: 900;
 }
 
 .login-btn:hover {
+  background: linear-gradient(135deg, #b31041, #1d0f57);
   cursor: pointer;
+  color: #1d0f57;
+  font-weight: 700;
+  font-size: 1.5em;
+  transform: scale(1.05);
+  box-shadow: 0px 4px 15px rgba(0, 123, 255, 0.2);
 }
 
 .email-placeholder::placeholder,
