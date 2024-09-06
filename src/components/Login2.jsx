@@ -1,8 +1,14 @@
 import "./Login2.css";
 import React, { useState } from "react";
 import bgimg from "../assets/bg-img.jpg";
+import { useNavigate } from "react-router-dom";
 
 const Login2 = () => {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
   const [showEmailPlaceholder, setShowEmailPlaceholder] = useState(false);
   const [showPasswordPlaceholder, setShowPasswordPlaceholder] = useState(false);
 
@@ -11,6 +17,37 @@ const Login2 = () => {
 
   const handlePasswordFocus = () => setShowPasswordPlaceholder(true);
   const handlePasswordBlur = () => setShowPasswordPlaceholder(false);
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    setError("");
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/token/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const { access, refresh } = data;
+
+        localStorage.setItem("accessToken", access);
+        localStorage.setItem("refreshToken", refresh);
+
+        navigate("/process");
+        console.log("Login successful!");
+      } else {
+        setError("Login failed. Please check your credentials.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setError("An error occurred. Please try again.");
+    }
+  };
 
   return (
     <div className="login-container">
@@ -84,10 +121,13 @@ const Login2 = () => {
                     border: "None",
                     borderBottom: "1px solid #ffffff",
                     width: "100%",
-
+                    color: "white",
                     outline: "None",
+                    paddingLeft: "20px",
                   }}
                   placeholder="EMAIL"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   type="email"
                   id="email"
                   name="email"
@@ -128,10 +168,14 @@ const Login2 = () => {
                     borderBottom: "1px solid #ffffff",
                     width: "100%",
                     outline: "None",
+                    color: "white",
+                    paddingLeft: "20px",
                   }}
                   placeholder="PASSWORD"
                   type="password"
                   id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   name="password"
                   required
                 />
@@ -170,7 +214,11 @@ const Login2 = () => {
               </a>
             </div>
 
-            <button style={{ marginTop: "15px" }} className="login-btn">
+            <button
+              onClick={handleLogin}
+              style={{ marginTop: "15px" }}
+              className="login-btn"
+            >
               Login
             </button>
 

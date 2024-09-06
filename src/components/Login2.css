@@ -69,7 +69,6 @@
 .email-placeholder::placeholder,
 .password-placeholder::placeholder {
   color: #ffffff;
-  padding-left: 20px;
 }
 
 .hidepasswordplaceholder::placeholder,
