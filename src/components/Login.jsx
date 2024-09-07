@@ -22,7 +22,7 @@ const Login2 = () => {
   const handlePasswordBlur = () => setShowPasswordPlaceholder(false);
 
   useEffect(() => {
-    setTimeout(() => setIsLoader(false), 3000);
+    setTimeout(() => setIsLoader(false), 3500);
   }, []);
 
   const handleLogin = async (event) => {
