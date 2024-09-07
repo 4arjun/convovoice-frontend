@@ -11,6 +11,7 @@ const Login2 = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoader] = useState(true);
+  const [rememberMe, setRememberMe] = useState(true);
 
   const [showEmailPlaceholder, setShowEmailPlaceholder] = useState(false);
   const [showPasswordPlaceholder, setShowPasswordPlaceholder] = useState(false);
@@ -23,6 +24,18 @@ const Login2 = () => {
 
   useEffect(() => {
     setTimeout(() => setIsLoader(false), 3500);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const userToken =
+        localStorage.getItem("userToken") ||
+        sessionStorage.getItem("userToken");
+
+      if (rememberMe && userToken) {
+        navigate("/process");
+      }
+    }, 2000);
   }, []);
 
   const handleLogin = async (event) => {
@@ -44,6 +57,11 @@ const Login2 = () => {
 
         localStorage.setItem("accessToken", access);
         localStorage.setItem("refreshToken", refresh);
+        if (rememberMe) {
+          localStorage.setItem("userToken", access);
+        } else {
+          sessionStorage.setItem("userToken", access);
+        }
 
         navigate("/process");
         console.log("Login successful!");
@@ -230,10 +248,10 @@ const Login2 = () => {
                   id="myCheckbox"
                   name="myCheckbox"
                   value="value1"
+                  checked={rememberMe}
+                  onChange={() => setRememberMe(!rememberMe)}
                 />
-                <p style={{ marginLeft: "-55px", fontSize: "16px" }}>
-                  Remember me
-                </p>
+                <p className="remember-text">Remember me</p>
                 <a className="forgot-password-text" href="#">
                   Forgot Password
                 </a>
