@@ -41,6 +41,19 @@ const Login2 = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     setError("");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (emailRegex.test(username) || usernameRegex.test(username)) {
+      if (passwordRegex.test(password)) {
+        console.log("format correct");
+      } else {
+        console.log("Invalid password format");
+      }
+    } else {
+      console.log("Invalid email/username format");
+    }
 
     try {
       const response = await fetch("http://127.0.0.1:8000/api/token/", {
@@ -127,13 +140,13 @@ const Login2 = () => {
                     <g
                       fill="none"
                       stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
                     >
                       <path
-                        stroke-dasharray="64"
-                        stroke-dashoffset="64"
+                        strokeDasharray="64"
+                        strokeDashoffset="64"
                         d="M4 5h16c0.55 0 1 0.45 1 1v12c0 0.55 -0.45 1 -1 1h-16c-0.55 0 -1 -0.45 -1 -1v-12c0 -0.55 0.45 -1 1 -1Z"
                       >
                         <animate
@@ -144,8 +157,8 @@ const Login2 = () => {
                         />
                       </path>
                       <path
-                        stroke-dasharray="24"
-                        stroke-dashoffset="24"
+                        strokeDasharray="24"
+                        strokeDashoffset="24"
                         d="M3 6.5l9 5.5l9 -5.5"
                       >
                         <animate
@@ -183,6 +196,7 @@ const Login2 = () => {
                     id="email"
                     name="email"
                     required
+                    autoComplete="username email"
                   />
                 </div>
 
@@ -229,6 +243,7 @@ const Login2 = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     name="password"
                     required
+                    autoComplete="current-password"
                   />
                 </div>
               </div>

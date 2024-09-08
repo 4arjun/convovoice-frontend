@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import "./Processing.css";
 import RecordRTC from "recordrtc";
 import { ClipLoader } from "react-spinners";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const AudioRecorder = () => {
   const [messages, setMessages] = useState([]);
@@ -12,14 +13,17 @@ const AudioRecorder = () => {
   const mediaStream = useRef(null);
   const audioElement = useRef(null);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Set token from localStorage when component mounts
     const savedToken = localStorage.getItem("accessToken");
     if (savedToken) {
       setToken(savedToken);
     }
-  }, []); // Empty dependency array means this runs once on mount
+    else {
+      navigate('/')
+    }
+  }, []);
 
   
   useEffect(() => {
@@ -33,7 +37,7 @@ const AudioRecorder = () => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ refresh: refreshToken }) // Ensure the key is 'refresh'
+            body: JSON.stringify({ refresh: refreshToken })
           });
 
           if (response.ok) {
@@ -44,7 +48,6 @@ const AudioRecorder = () => {
             const errorData = await response.json();
             console.error('Failed to refresh access token:', errorData);
             if (errorData.code === "token_not_valid") {
-              // Handle token issues, e.g., prompt re-login
             }
           }
         } catch (error) {
@@ -55,7 +58,7 @@ const AudioRecorder = () => {
 
     const timeoutId = setTimeout(() => {
       refreshAccessToken();
-    }, 2 * 60 * 10000); // 2 minutes
+    }, 2 * 60 * 10000); //2min
 
     return () => clearTimeout(timeoutId);
   }, []);
@@ -94,7 +97,7 @@ const AudioRecorder = () => {
         const formData = new FormData();
         formData.append("audio", blob, "audio.webm");
 
-        setLoading(true); // Show loading symbol
+        setLoading(true); 
 
         try {
           const response = await fetch(
@@ -130,10 +133,8 @@ const AudioRecorder = () => {
               }
             }
           } else if (response.status === 401) {
-            // Handle unauthorized access
             console.warn("Unauthorized. Redirecting to login.");
             localStorage.removeItem("accessToken");
-            // Redirect to login page or show an error message
           } else {
             console.warn("No assistant message found in the response");
             setMessages((prevMessages) => [
@@ -151,7 +152,7 @@ const AudioRecorder = () => {
             },
           ]);
         } finally {
-          setLoading(false); // Hide loading symbol
+          setLoading(false); 
         }
       });
 
@@ -184,7 +185,6 @@ const AudioRecorder = () => {
             <ClipLoader color="#2196f3" size={60} />
           </div>
         )}
-        {/* Scroll to bottom */}
         <div ref={messagesEndRef} />
       </div>
       <div className="chat-input">
