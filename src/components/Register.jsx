@@ -1,22 +1,21 @@
-import "./Login.css";
+import "./Register.css";
 import React, { useEffect, useState } from "react";
 import bgimg from "../assets/bg-img.jpg";
 import { useNavigate } from "react-router-dom";
 import { Alert } from "@mui/material";
 
-const Login2 = () => {
+const Register = () => {
   const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoader] = useState(true);
-  const [rememberMe, setRememberMe] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-
 
   const [showEmailPlaceholder, setShowEmailPlaceholder] = useState(false);
   const [showPasswordPlaceholder, setShowPasswordPlaceholder] = useState(false);
+  const [showConfirmPasswordPlaceholder, setShowConfirmPasswordPlaceholder] = useState(false);
 
   const handleEmailFocus = () => setShowEmailPlaceholder(true);
   const handleEmailBlur = () => setShowEmailPlaceholder(false);
@@ -24,28 +23,33 @@ const Login2 = () => {
   const handlePasswordFocus = () => setShowPasswordPlaceholder(true);
   const handlePasswordBlur = () => setShowPasswordPlaceholder(false);
 
+  const handleConfirmPasswordFocus = () => setShowConfirmPasswordPlaceholder(true);
+  const handleConfirmPasswordBlur = () => setShowConfirmPasswordPlaceholder(false);
+
   useEffect(() => {
-    setTimeout(() => setIsLoader(false), 3500);
+    setTimeout(() => setIsLoader(false), 1500);
   }, []);
 
-  const handleLogin = async (event) => {
+  const handleSignup = async (event) => {
     event.preventDefault();
     setError("");
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+
     if (emailRegex.test(username) || usernameRegex.test(username)) {
-      if (passwordRegex.test(password)) {
+      if (passwordRegex.test(password) && password === confirmPassword) {
         console.log("format correct");
       } else {
-        console.log("Invalid password format");
+        console.log("Invalid password format or passwords do not match");
       }
     } else {
       console.log("Invalid email/username format");
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/token/", {
+      const response = await fetch("http://127.0.0.1:8000/api/signup/", { // Changed endpoint to /signup
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,33 +58,22 @@ const Login2 = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        const { access, refresh } = data;
-
-        localStorage.setItem("accessToken", access);
-        localStorage.setItem("refreshToken", refresh);
-        if (rememberMe) {
-          localStorage.setItem("userToken", access);
-        } else {
-          sessionStorage.setItem("userToken", access);
-        }
-
-        navigate("/process");
-        console.log("Login successful!");
+        navigate("/welcome");
+        console.log("Signup successful!");
       } else {
-        setError("Login failed. Please check your credentials.");
+        setError("Signup failed. Please check your details.");
       }
     } catch (error) {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 5000);
 
-      console.error("Error during login:", error);
+      console.error("Error during signup:", error);
       setError("An error occurred. Please try again.");
     }
   };
 
   return (
-    <div className="login-container">
+    <div className="signup-container">
       {showAlert && (
         <Alert
           className="alert-container"
@@ -97,7 +90,7 @@ const Login2 = () => {
           severity="error"
           onClose={() => setShowAlert(false)}
         >
-          Incorrect username or password. Please try again.
+          Incorrect details. Please try again.
         </Alert>
       )}
 
@@ -106,9 +99,9 @@ const Login2 = () => {
       ) : (
         <div className="bg-img-container">
           <img src={bgimg} alt="" />
-          <div className="login-form">
-            <div className="login-items">
-              <h2 className="login-text">Login</h2>
+          <div className="signup-form">
+            <div className="signup-items">
+              <h2 className="signup-text">Sign Up</h2>
               <div
                 style={{
                   textAlign: "left",
@@ -166,7 +159,7 @@ const Login2 = () => {
                     onBlur={handleEmailBlur}
                     className={
                       showEmailPlaceholder
-                        ? "hideemailplaceholder"
+                        ? "hide-email-placeholder"
                         : "email-placeholder"
                     }
                     style={{
@@ -182,8 +175,8 @@ const Login2 = () => {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     type="email"
-                    id="email"
-                    name="email"
+                    id="username"
+                    name="username"
                     required
                     autoComplete="username email"
                   />
@@ -213,7 +206,7 @@ const Login2 = () => {
                     onBlur={handlePasswordBlur}
                     className={
                       showPasswordPlaceholder
-                        ? "hidepasswordplaceholder"
+                        ? "hide-password-placeholder"
                         : "password-placeholder"
                     }
                     style={{
@@ -232,41 +225,64 @@ const Login2 = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     name="password"
                     required
-                    autoComplete="current-password"
+                    autoComplete="new-password"
+                  />
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    paddingTop: "6px",
+                  }}
+                >
+                  <svg
+                    style={{ position: "absolute" }}
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M12 17a2 2 0 0 1-2-2c0-1.11.89-2 2-2a2 2 0 0 1 2 2a2 2 0 0 1-2 2m6 3V10H6v10zm0-12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10c0-1.11.89-2 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2zm-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3"
+                    />
+                  </svg>
+                  <input
+                    onFocus={handleConfirmPasswordFocus}
+                    onBlur={handleConfirmPasswordBlur}
+                    className={
+                      showConfirmPasswordPlaceholder
+                        ? "hide-confirm-password-placeholder"
+                        : "confirm-password-placeholder"
+                    }
+                    style={{
+                      backgroundColor: "transparent",
+                      border: "None",
+                      borderBottom: "1px solid #ffffff",
+                      width: "100%",
+                      outline: "None",
+                      color: "white",
+                      paddingLeft: "20px",
+                    }}
+                    placeholder="CONFIRM PASSWORD"
+                    type="password"
+                    id="confirm-password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    name="confirm-password"
+                    required
+                    autoComplete="new-password"
                   />
                 </div>
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  paddingTop: "15px",
-                  justifyContent: "space-between",
-                  width: "80%",
-                }}
-              >
-                <input
-                  style={{ marginTop: "3px" }}
-                  type="checkbox"
-                  id="myCheckbox"
-                  name="myCheckbox"
-                  value="value1"
-                  checked={rememberMe}
-                  onChange={() => setRememberMe(!rememberMe)}
-                />
-                <p className="remember-text">Remember me</p>
-                <a className="forgot-password-text" href="#">
-                  Forgot Password
-                </a>
-              </div>
-
               <button
-                onClick={handleLogin}
+                onClick={handleSignup}
                 style={{ marginTop: "15px" }}
-                className="login-btn"
+                className="signup-btn"
               >
-                Login
+                Sign Up
               </button>
 
               <div
@@ -279,10 +295,10 @@ const Login2 = () => {
                 }}
               >
                 <p style={{ fontWeight: "200", fontSize: "15px" }}>
-                  Dont have an account?
+                  Already have an account?
                 </p>
-                <a className="register-text" href="/register">
-                  Register
+                <a className="login-text" href="/">
+                  Login
                 </a>
               </div>
             </div>
@@ -293,4 +309,4 @@ const Login2 = () => {
   );
 };
 
-export default Login2;
+export default Register;
