@@ -27,7 +27,7 @@ const Register = () => {
   const handleConfirmPasswordBlur = () => setShowConfirmPasswordPlaceholder(false);
 
   useEffect(() => {
-    setTimeout(() => setIsLoader(false), 1500);
+    setTimeout(() => setIsLoader(false), 500);
   }, []);
 
   const handleSignup = async (event) => {
