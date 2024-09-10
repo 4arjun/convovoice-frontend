@@ -15,7 +15,8 @@ const Register = () => {
 
   const [showEmailPlaceholder, setShowEmailPlaceholder] = useState(false);
   const [showPasswordPlaceholder, setShowPasswordPlaceholder] = useState(false);
-  const [showConfirmPasswordPlaceholder, setShowConfirmPasswordPlaceholder] = useState(false);
+  const [showConfirmPasswordPlaceholder, setShowConfirmPasswordPlaceholder] =
+    useState(false);
 
   const handleEmailFocus = () => setShowEmailPlaceholder(true);
   const handleEmailBlur = () => setShowEmailPlaceholder(false);
@@ -23,8 +24,10 @@ const Register = () => {
   const handlePasswordFocus = () => setShowPasswordPlaceholder(true);
   const handlePasswordBlur = () => setShowPasswordPlaceholder(false);
 
-  const handleConfirmPasswordFocus = () => setShowConfirmPasswordPlaceholder(true);
-  const handleConfirmPasswordBlur = () => setShowConfirmPasswordPlaceholder(false);
+  const handleConfirmPasswordFocus = () =>
+    setShowConfirmPasswordPlaceholder(true);
+  const handleConfirmPasswordBlur = () =>
+    setShowConfirmPasswordPlaceholder(false);
 
   useEffect(() => {
     setTimeout(() => setIsLoader(false), 500);
@@ -36,7 +39,8 @@ const Register = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
     if (emailRegex.test(username) || usernameRegex.test(username)) {
       if (passwordRegex.test(password) && password === confirmPassword) {
@@ -49,7 +53,8 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/signup/", { // Changed endpoint to /signup
+      const response = await fetch("http://127.0.0.1:8000/api/signup/", {
+        // Changed endpoint to /signup
         method: "POST",
         headers: {
           "Content-Type": "application/json",
