@@ -14,7 +14,6 @@ const Login2 = () => {
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
-
   const [showEmailPlaceholder, setShowEmailPlaceholder] = useState(false);
   const [showPasswordPlaceholder, setShowPasswordPlaceholder] = useState(false);
 

@@ -36,7 +36,7 @@ const Register = () => {
 
   const handleSignup = async (event) => {
     event.preventDefault();
-    setShowAlert(false); 
+    setShowAlert(false);
     setMessage("");
     setError("");
 
@@ -50,7 +50,7 @@ const Register = () => {
         console.log("format correct");
       } else {
         console.log("Invalid password format or passwords do not match");
-        setMessage("Invalid password format or passwords do not match")
+        setMessage("Invalid password format or passwords do not match");
         setShowAlert(true);
         return;
       }
@@ -61,7 +61,6 @@ const Register = () => {
       return;
     }
     if (!showAlert) {
-
       try {
         const response = await fetch("http://127.0.0.1:8000/api/register/", {
           // Changed endpoint to /signup
@@ -71,7 +70,7 @@ const Register = () => {
           },
           body: JSON.stringify({ username, password }),
         });
-  
+
         if (response.ok) {
           navigate("/welcome");
           console.log("Signup successful!");
@@ -79,14 +78,11 @@ const Register = () => {
           setError("Signup failed. Please check your details.");
         }
       } catch (error) {
-  
         console.error("Error during signup:", error);
         setError("An error occurred. Please try again.");
       }
-    };
-
     }
-    
+  };
 
   return (
     <div className="signup-container">

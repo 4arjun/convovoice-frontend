@@ -19,39 +19,40 @@ const AudioRecorder = () => {
     const savedToken = localStorage.getItem("accessToken");
     if (savedToken) {
       setToken(savedToken);
-    }
-    else {
-      navigate('/')
+    } else {
+      navigate("/");
     }
   }, []);
 
-  
   useEffect(() => {
     const refreshAccessToken = async () => {
       const refreshToken = localStorage.getItem("refreshToken");
 
       if (refreshToken) {
         try {
-          const response = await fetch('http://127.0.0.1:8000/api/token/refresh/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ refresh: refreshToken })
-          });
+          const response = await fetch(
+            "http://127.0.0.1:8000/api/token/refresh/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ refresh: refreshToken }),
+            }
+          );
 
           if (response.ok) {
             const data = await response.json();
             setToken(data.access);
-            localStorage.setItem('accessToken', data.access);
+            localStorage.setItem("accessToken", data.access);
           } else {
             const errorData = await response.json();
-            console.error('Failed to refresh access token:', errorData);
+            console.error("Failed to refresh access token:", errorData);
             if (errorData.code === "token_not_valid") {
             }
           }
         } catch (error) {
-          console.error('Error refreshing access token:', error);
+          console.error("Error refreshing access token:", error);
         }
       }
     };
@@ -62,7 +63,6 @@ const AudioRecorder = () => {
 
     return () => clearTimeout(timeoutId);
   }, []);
-
 
   const scrollToBottom = useCallback(() => {
     if (messagesEndRef.current) {
@@ -97,7 +97,7 @@ const AudioRecorder = () => {
         const formData = new FormData();
         formData.append("audio", blob, "audio.webm");
 
-        setLoading(true); 
+        setLoading(true);
 
         try {
           const response = await fetch(
@@ -152,7 +152,7 @@ const AudioRecorder = () => {
             },
           ]);
         } finally {
-          setLoading(false); 
+          setLoading(false);
         }
       });
 
