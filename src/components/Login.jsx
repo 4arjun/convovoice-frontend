@@ -31,19 +31,6 @@ const Login2 = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
     setError("");
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-    if (emailRegex.test(username) || usernameRegex.test(username)) {
-      if (passwordRegex.test(password)) {
-        console.log("format correct");
-      } else {
-        console.log("Invalid password format");
-      }
-    } else {
-      console.log("Invalid email/username format");
-    }
-
     try {
       const response = await fetch("http://127.0.0.1:8000/api/token/", {
         method: "POST",

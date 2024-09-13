@@ -12,6 +12,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoader] = useState(true);
+  const [message, setMessage] = useState("");
 
   const [showEmailPlaceholder, setShowEmailPlaceholder] = useState(false);
   const [showPasswordPlaceholder, setShowPasswordPlaceholder] = useState(false);
@@ -35,6 +36,8 @@ const Register = () => {
 
   const handleSignup = async (event) => {
     event.preventDefault();
+    setShowAlert(false); 
+    setMessage("");
     setError("");
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -47,35 +50,43 @@ const Register = () => {
         console.log("format correct");
       } else {
         console.log("Invalid password format or passwords do not match");
+        setMessage("Invalid password format or passwords do not match")
+        setShowAlert(true);
+        return;
       }
     } else {
+      setMessage("Invalid email/username format");
       console.log("Invalid email/username format");
-    }
-
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/signup/", {
-        // Changed endpoint to /signup
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (response.ok) {
-        navigate("/welcome");
-        console.log("Signup successful!");
-      } else {
-        setError("Signup failed. Please check your details.");
-      }
-    } catch (error) {
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 5000);
-
-      console.error("Error during signup:", error);
-      setError("An error occurred. Please try again.");
+      return;
     }
-  };
+    if (!showAlert) {
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/register/", {
+          // Changed endpoint to /signup
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        });
+  
+        if (response.ok) {
+          navigate("/welcome");
+          console.log("Signup successful!");
+        } else {
+          setError("Signup failed. Please check your details.");
+        }
+      } catch (error) {
+  
+        console.error("Error during signup:", error);
+        setError("An error occurred. Please try again.");
+      }
+    };
+
+    }
+    
 
   return (
     <div className="signup-container">
@@ -95,7 +106,7 @@ const Register = () => {
           severity="error"
           onClose={() => setShowAlert(false)}
         >
-          Incorrect details. Please try again.
+          {message}
         </Alert>
       )}
 
