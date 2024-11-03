@@ -28,15 +28,15 @@ ChartJS.register(
 
 const Dashboard = () => {
   const lineData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+    labels: ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
     datasets: [
       {
         label: "Speaking Proficiency",
-        data: [20, 40, 60, 80, 100, 120, 140],
+        data: [20, 30, 45, 70, 80, 100, 80],
         borderColor: "#3498db",
         backgroundColor: "rgba(52, 152, 219, 0.2)",
         fill: true,
-        tension: 0.1,
+        tension: 0.3,
       },
     ],
   };

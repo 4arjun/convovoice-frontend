@@ -6,16 +6,18 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import WelcomePage from "./components/Welcome";
 import Dashboard from "./components/Dashboard";
+import PrivacyPolicy from "./components/PrivacyPolicy";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/process" element={<AudioRecorder />} />
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/welcome" element= {<WelcomePage />} />
+        <Route path="/" element= {<WelcomePage />} />
         <Route path="/dashboard" element= {<Dashboard />} />
+        <Route path="/privacy/policy" element={<PrivacyPolicy />} />
       </Routes>
     </Router>
   );

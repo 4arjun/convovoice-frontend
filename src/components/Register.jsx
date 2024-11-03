@@ -72,7 +72,7 @@ const Register = () => {
         });
 
         if (response.ok) {
-          navigate("/welcome");
+          navigate("/login");
           console.log("Signup successful!");
         } else {
           setError("Signup failed. Please check your details.");
