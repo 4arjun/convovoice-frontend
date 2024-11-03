@@ -169,6 +169,9 @@
 }
 
 @media (max-width: 480px) {
+  .bg-img-container img {
+    width: 115%;
+  }
   .login-form {
     width: 90%;
     max-width: 300px;
