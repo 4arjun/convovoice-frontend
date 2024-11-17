@@ -16,8 +16,7 @@
 }
 
 .bg-img-container img {
-  margin-top: 10%;
-  height: 90%;
+  height: 100%;
   width: 100%;
   object-fit: cover;
   border-radius: 20px;

@@ -170,6 +170,11 @@ const AudioRecorder = () => {
   }, []);
 
   return (
+    <div className="process-container">
+      <div className="nav">
+        <h1>erg</h1>
+        <h1>ehr</h1>
+      </div>
     <div className="chat-container">
       <div className="chat-header">
         <h2>Language Learner</h2>
@@ -196,6 +201,7 @@ const AudioRecorder = () => {
         </button>
       </div>
       <audio ref={audioElement} controls style={{ display: "none" }} />
+    </div>
     </div>
   );
 };

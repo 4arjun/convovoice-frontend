@@ -1,7 +1,13 @@
 import React from "react";
 import "./Welcome.css";
+import { useNavigate } from "react-router-dom";
 
 const Welcome = () => {
+  const navigate = useNavigate();
+  const handleButtonClick = () => {
+    navigate("/login");
+  };
+
   return (
     <div className="welcome-body">
       <header className="welcome-hero-section">
@@ -13,7 +19,9 @@ const Welcome = () => {
             Dive into interactive AI-powered conversations and enhance your
             language skills.
           </p>
-          <button className="welcome-cta-button">Get Started</button>
+          <button className="welcome-cta-button" onClick={handleButtonClick}>
+            Get Started
+          </button>{" "}
         </div>
       </header>
 
